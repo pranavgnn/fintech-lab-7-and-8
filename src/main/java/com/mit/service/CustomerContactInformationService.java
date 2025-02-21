@@ -1,47 +1,19 @@
 package com.mit.service;
 
 import com.mit.entity.CustomerContactInformation;
-import com.mit.repository.CustomerContactInformationRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class CustomerContactInformationService {
+public interface CustomerContactInformationService {
 
-	@Autowired
-	private CustomerContactInformationRepository customerContactInformationRepository;
+    List<CustomerContactInformation> getAllCustomerContactInformations();
 
-	public List<CustomerContactInformation> getAllCustomerContactInformations() {
-		return customerContactInformationRepository.findAll();
-	}
+    Optional<CustomerContactInformation> getCustomerContactInformationById(Long id);
 
-	public Optional<CustomerContactInformation> getCustomerContactInformationById(Long id) {
-		return customerContactInformationRepository.findById(id);
-	}
+    CustomerContactInformation createCustomerContactInformation(CustomerContactInformation customerContactInformation);
 
-	public CustomerContactInformation createCustomerContactInformation(
-			CustomerContactInformation customerContactInformation) {
-		return customerContactInformationRepository.save(customerContactInformation);
-	}
+    CustomerContactInformation updateCustomerContactInformation(Long id, CustomerContactInformation newCustomerContactInformation);
 
-	public CustomerContactInformation updateCustomerContactInformation(Long id,
-			CustomerContactInformation newCustomerContactInformation) {
-		return customerContactInformationRepository.findById(id).map(customerContactInformation -> {
-			customerContactInformation.setType(newCustomerContactInformation.getType());
-			customerContactInformation.setValue(newCustomerContactInformation.getValue());
-			return customerContactInformationRepository.save(customerContactInformation);
-		}).orElseThrow(() -> new RuntimeException("Customer contact information not found with id: " + id));
-	}
-
-	public void deleteCustomerContactInformation(Long id) {
-		customerContactInformationRepository.findById(id).ifPresentOrElse(
-				customerContactInformationRepository::delete,
-				() -> {
-					throw new RuntimeException("Customer contact information not found with id: " + id);
-				});
-	}
+    void deleteCustomerContactInformation(Long id);
 }
