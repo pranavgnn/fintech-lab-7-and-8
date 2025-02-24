@@ -59,19 +59,25 @@ My dummy JSON data used for testing:
 ```
 
 1. POST Request
+
 ![image](https://github.com/user-attachments/assets/6cfa85f0-084a-41fe-9772-b1915f1bcf1f)
 
-2. GET Request (all records)
+3. GET Request (all records)
+
 ![image](https://github.com/user-attachments/assets/179f3bd9-5834-4288-b6e1-4f3bbd756298)
 
-3. GET Request (by id)
+5. GET Request (by id)
+
 ![image](https://github.com/user-attachments/assets/bf2bae82-d2bd-4ae4-87da-34f8ec85ba66)
 
-4. PUT Request
+7. PUT Request
+
 ![image](https://github.com/user-attachments/assets/7f5fe886-4492-4523-a40a-0cb1d74d4a07)
 
-5. DELETE Request
+9. DELETE Request
+
 ![image](https://github.com/user-attachments/assets/b8de913a-2183-465e-b328-ceb69925e4cd)
 
-6. GET Request (all records) to verify DELETE
+11. GET Request (all records) to verify DELETE
+
 ![image](https://github.com/user-attachments/assets/bf69d94a-de3c-4a51-8ed4-a92edd4a68ef)
