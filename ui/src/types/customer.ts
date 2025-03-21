@@ -10,30 +10,18 @@ export interface CustomerProofOfId {
   endDate: string;
 }
 
-export interface CustomerName {
-  firstName: string;
-  lastName: string;
-  middleName?: string;
-}
-
-export interface CustomerContact {
-  email: string;
-  phone: string;
-  alternatePhone?: string;
-}
-
-export interface CustomerAddress {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-}
-
-export interface CustomerDetails {
-  name: CustomerName;
-  contact: CustomerContact;
-  address: CustomerAddress;
-  customerIdentifications: CustomerIdentification[];
-  customerProofOfIds: CustomerProofOfId[];
+export interface CustomerData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  customerIdentifications?: CustomerIdentification[];
+  customerProofOfIds?: CustomerProofOfId[];
 }

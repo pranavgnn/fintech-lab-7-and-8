@@ -1,87 +1,144 @@
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { Button } from "../components/Button";
-import { useEffect, useState } from "react";
+import Button from "../components/Button";
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    setIsLoaded(true);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles: {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+    }[] = [];
+
+    const createParticles = () => {
+      const particleCount = Math.floor(window.innerWidth / 15);
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 1.5 + 0.5,
+          speedX: Math.random() * 0.3 - 0.15,
+          speedY: Math.random() * 0.3 - 0.15,
+          color: `rgba(${Math.floor(Math.random() * 100) + 155}, ${
+            Math.floor(Math.random() * 100) + 155
+          }, 255, ${Math.random() * 0.3 + 0.2})`,
+        });
+      }
+    };
+
+    const drawParticles = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle, index) => {
+        ctx.fillStyle = particle.color;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Update particle position
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+
+        // Boundary check
+        if (particle.x < 0 || particle.x > canvas.width) {
+          particle.speedX = -particle.speedX;
+        }
+
+        if (particle.y < 0 || particle.y > canvas.height) {
+          particle.speedY = -particle.speedY;
+        }
+
+        // Draw connections
+        particles.forEach((otherParticle, otherIndex) => {
+          if (index !== otherIndex) {
+            const dx = particle.x - otherParticle.x;
+            const dy = particle.y - otherParticle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 150) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(100, 100, 255, ${
+                0.1 * (1 - distance / 150)
+              })`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particle.x, particle.y);
+              ctx.lineTo(otherParticle.x, otherParticle.y);
+              ctx.stroke();
+            }
+          }
+        });
+      });
+
+      requestAnimationFrame(drawParticles);
+    };
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = [];
+      createParticles();
+    };
+
+    window.addEventListener("resize", handleResize);
+    createParticles();
+    drawParticles();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh]">
-      <div
-        className={`transition-all duration-1000 ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <div className="space-animation mb-8">
-          <div className="stars flex justify-center">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="text-purple-300 text-3xl mx-1"
-                style={{
-                  animation: `pulse ${2 + i * 0.2}s infinite ${i * 0.1}s`,
-                }}
-              >
-                ⭐
-              </div>
-            ))}
-          </div>
-          <div className="planet-container mt-4">
-            <div className="planet h-32 w-32 bg-gradient-to-br from-indigo-500 via-purple-700 to-indigo-800 rounded-full mx-auto pulse relative">
-              <div
-                className="absolute w-8 h-8 bg-gray-700 rounded-full opacity-30"
-                style={{ top: "20%", left: "15%" }}
-              ></div>
-              <div
-                className="absolute w-12 h-12 bg-gray-700 rounded-full opacity-20"
-                style={{ bottom: "25%", right: "10%" }}
-              ></div>
-            </div>
-            <div className="orbit w-48 h-48 border border-gray-700 rounded-full mx-auto mt-[-88px] relative">
-              <div
-                className="satellite h-5 w-5 bg-gray-300 rounded-full absolute"
-                style={{
-                  top: "50%",
-                  left: "0%",
-                  animation: "orbit 8s linear infinite",
-                }}
-              ></div>
-            </div>
-          </div>
-        </div>
+    <div className="relative min-h-screen overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full -z-10"
+      />
 
-        <div className="card max-w-lg w-full mt-8 text-center slide-up fade-in">
-          <h1 className="text-4xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300">
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[hsl(var(--background))] via-transparent to-[hsl(var(--background))] opacity-70 -z-5"></div>
+
+      <div className="container mx-auto px-4 py-20 min-h-screen flex flex-col justify-center items-center">
+        <div className="text-center max-w-3xl mx-auto fadeIn slideUp">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
             Customer Portal
           </h1>
-          <p className="mb-8 text-gray-400 leading-relaxed">
-            Complete your profile to join our customer network. Enter your
-            details through our sleek, secure interface.
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-12">
+            Simplify your customer management process with our sleek, modern
+            interface designed for efficiency.
           </p>
-          <Button
-            onClick={() => navigate("/customer-name")}
-            className="w-full py-3 text-lg"
-          >
-            Begin Journey
-          </Button>
+
+          <div className="space-y-4">
+            <Button
+              className="w-full md:w-64 text-lg py-4"
+              onClick={() => navigate("/customer-detail")}
+            >
+              Get Started
+            </Button>
+
+            <p className="text-gray-400 text-sm">
+              Streamlined customer data collection system
+            </p>
+          </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes orbit {
-          from {
-            transform: rotate(0deg) translateX(72px) rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg) translateX(72px) rotate(-360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 };
